@@ -1,0 +1,1 @@
+Ce répertoire contiendra l'ensemble des fichiers KiCad et les schémas pour le PCB.

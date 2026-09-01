@@ -1,0 +1,1 @@
+Ce répertoire contiendra le code PC (traitement et IHM).

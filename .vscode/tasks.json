@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1. Build Firmware",
+            "type": "shell",
+            "command": "cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=CMakeLists.txt && cmake --build build",
+            "options": {
+                "cwd": "${workspaceFolder}/firmware"
+            },
+            "group": "build",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "2. Push Code to STM32",
+            "type": "shell",
+            "command": "/mnt/c/Program\\ Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI.exe -c port=SWD -w build/firmware.bin -v -rst",
+            "options": {
+                "cwd": "${workspaceFolder}/firmware"
+            },
+            "dependsOn": "1. Build Firmware",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,1 +1,0 @@
-Ce répertoire contiendra l'ensemble du code embarqué firmware en C/C++.

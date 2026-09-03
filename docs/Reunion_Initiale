@@ -1,0 +1,99 @@
+
+# 📋 Ordre du Jour & Fiche de Réunion : Projet Cible Connectée
+
+Projet 5A INSA-TSM | Projet `dartboard-connect`
+
+---
+
+## 1. Chaîne d'Acquisition Électronique & Capteurs
+
+* **Capteurs :** Utilisation de **4-5 ou + capteurs piézoélectriques** (positionnés derrière la cible).
+* **Conditionnement du signal (Hardware) :**
+* Étage d'amplification (AOP) et filtrage analogique.
+* Comparateur à hystérésis (Trigger de Schmitt) pour transformer l'onde mécanique en un signal  propre 0 - 3.3V.
+
+
+* **Prototypage & PCB :**
+* **Phase 1 (Validation) :** Banc d'essai sur plaquette d'essai + oscilloscope pour régler les seuils AOP et observer le comportement des piézos.
+* **Phase 2 (Finale) :** Conception d'une carte électronique dédiée (PCB sous KiCad).
+
+
+* **Questions pour le prof :**
+* *L'école dispose-t-elle déjà de cartes Nucleo (ex: Nucleo-F446RE) et de composants/AOP en stock, ou devons-nous passer une commande ?*
+* *Pensez-vous qu'un banc de test sur breadboard soit suffisant dans un premier temps pour valider l'étage analogique avant le tirage du PCB ?*
+
+
+
+---
+
+## 2. Microcontrôleur & Mesure Temporelle
+
+* **Contrainte de fréquence :** La vitesse de propagation dans le matériau étant élevée, la différence de temps d'arrivée est de l'ordre de la **microseconde**.
+* **Matériel ciblé :** STM32 type projet Voilier.
+* Timers matériels avec fonction **Input Capture** (permet de dater les fronts montants à la fréquence de l'horloge système sans dépendre des latences logicielles).
+
+
+* **Partitionnement Logiciel (Qui fait quoi ?) :**
+* **STM32 :** Uniquement la capture déterministe des temps (t_1, t_2, t_3, t_4) via timers et l'envoi de la trame brute via USB-CDC (Série).
+* **PC :** Calculs mathématiques TDOA (X,Y), conversion polaire (r, theta), calcul du score et gestion de l'IHM.
+
+
+* **Questions pour le prof :**
+* *Validez-vous le choix de traiter l'algorithme TDOA sur le PC plutôt que sur le STM32 pour simplifier le débuggage et l'itération ?*
+
+
+
+---
+
+## 3. Algorithmes TDOA & Physique du Matériau
+
+* **Stratégie Algorithmique :**
+1. **Algorithme Analytique (ex: Bancroft / Chan) :** Calcul direct rapide de (X,Y) à partir des équations hyperboliques.
+2. **Algorithme Itératif (Moindres Carrés / Gauss-Newton) :** Ajouté dans un second temps pour affiner la position et réduire l'impact des erreurs de mesure.
+
+
+* **Problématique du Matériau (Sisal / Bois) :**
+* Inhomogénéité du matériau et absorption acoustique variable.
+* Incertitude sur la vitesse exacte de propagation de l'onde (v).
+
+
+* **Stratégie de Calibration :**
+* **Méthode envisagée :** Taper sur des points stratégiques connus de la cible (ex: le centre 0,0 et les 4 extrêmes) pour mesurer les delta t réels et ajuster la vitesse v dans l'algorithme.
+
+
+* **Questions pour le prof :**
+* *Une procédure de calibration par interpolation/cartographie (Look-Up Table) vous semble-t-elle pertinente si le matériau déforme trop les hyperboles théoriques ?*
+
+
+
+---
+
+## 4. Architecture Informatique & Workflow de Développement
+
+* **Organisation du code (Monorepo) :**
+* Dépôt Git unique (`dartboard-connect`).
+* Arborescence séparée : `hardware/`, `firmware/` (C/C++ STM32), `software/`.
+
+
+* **Développement sans matériel (Simulateur / Mock) :**
+* Création d'un script "simulateur de trames USB" pour développer et tester l'IHM et l'algorithme TDOA chez soi, sans la cible physique.
+
+
+* **Workflow Git :**
+* Branche `main` protégée + branches de fonctionnalités (*feature branches*) avec revues de code entre vous deux.
+
+
+* **Questions pour le prof :**
+* *Validez-vous l'organisation sous forme de Monorepo pour l'évaluation du projet ?*
+* *Existe-t-il des contraintes ou des livrables informatiques spécifiques demandés par la formation INSA-TSM ?*
+
+
+
+---
+
+## 5. Planning Prévisionnel & Jalons Majeurs
+
+* **Septembre - Octobre :** Banc d'essai analogique (AOP + Piézo) à l'oscilloscope + Prise en main des Input Capture Timers sur STM32.
+* **Novembre :** Développement du simulateur USB, de l'algorithme TDOA analytique et de l'IHM de base sur PC.
+* **Décembre :** Intégration chaîne complète (Cible -> AOP -> STM32 -> USB -> PC) + Campagne de tests/calibration.
+* **Janvier :** Routage/Fabrication du PCB final, algorithme itératif et finitions IHM.
